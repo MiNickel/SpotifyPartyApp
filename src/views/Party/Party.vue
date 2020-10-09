@@ -7,6 +7,7 @@
       solo
       label="Suche"
       clearable
+      @click:clear="clearSearch()"
     ></v-text-field>
     <v-list
       class="list"
@@ -63,10 +64,16 @@ import { Component, Vue, Watch } from "vue-property-decorator";
 export default class Party extends Vue {
   private search = "";
   private searchTracks: unknown[] = [];
-  playlistTracks = null;
+  private awaitingSearch = false;
+  private playlistTracks: unknown[] = [];
 
   private addTrack = (track: unknown) => {
     console.log(track);
+  };
+
+  private clearSearch = () => {
+    this.search = "";
+    this.searchTracks = [];
   };
 
   mounted() {
@@ -75,6 +82,7 @@ export default class Party extends Vue {
     }
     const response = this.getPlaylistTracks();
     response.then(data => {
+      console.log(data);
       this.playlistTracks = data;
     });
   }
@@ -93,19 +101,25 @@ export default class Party extends Vue {
 
   @Watch("search")
   onSearch() {
-    if (this.search && this.search.length > 0) {
-      this.axios
-        .get(`${process.env.VUE_APP_SERVER_URL}/search`, {
-          params: {
-            code: this.$store.state.code,
-            search: this.search
-          }
-        })
-        .then(response => {
-          this.searchTracks = response.data.tracks;
-        });
-    } else {
-      this.searchTracks = [];
+    if (!this.awaitingSearch) {
+      setTimeout(() => {
+        if (this.search && this.search.length > 0) {
+          this.axios
+            .get(`${process.env.VUE_APP_SERVER_URL}/search`, {
+              params: {
+                code: this.$store.state.code,
+                search: this.search
+              }
+            })
+            .then(response => {
+              this.searchTracks = response.data.tracks;
+            });
+        } else {
+          this.searchTracks = [];
+        }
+        this.awaitingSearch = false;
+      }, 500);
+      this.awaitingSearch = true;
     }
   }
 }
