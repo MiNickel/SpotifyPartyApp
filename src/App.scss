@@ -23,3 +23,7 @@ main {
   opacity: 0;
   transform: translate(-2em, 0);
 }
+
+.v-item-group.v-bottom-navigation .v-btn.v-btn--active {
+  color: #1db954 !important;
+}

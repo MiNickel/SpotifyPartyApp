@@ -8,7 +8,7 @@
         <router-view></router-view>
       </transition>
     </v-main>
-    <v-bottom-navigation>
+    <v-bottom-navigation dark>
       <v-btn to="/">
         <span>
           Home

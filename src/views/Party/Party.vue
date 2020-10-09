@@ -56,6 +56,7 @@
 </template>
 
 <script lang="ts">
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, Vue, Watch } from "vue-property-decorator";
 
 @Component({
@@ -67,11 +68,26 @@ export default class Party extends Vue {
   private awaitingSearch = false;
   private playlistTracks: unknown[] = [];
 
-  private addTrack = (track: unknown) => {
-    console.log(track);
+  private addTrack = (track: any) => {
+    this.axios
+      .get(`${process.env.VUE_APP_SERVER_URL}/addTrack`, {
+        params: {
+          code: this.$store.state.code,
+          trackId: track.id
+        }
+      })
+      .then(response => {
+        console.log(response);
+        this.clearSearch();
+        const newPlaylistTracks = this.getPlaylistTracks();
+        newPlaylistTracks.then(data => {
+          this.playlistTracks = data;
+        });
+      });
   };
 
   private clearSearch = () => {
+    console.log("clear");
     this.search = "";
     this.searchTracks = [];
   };
