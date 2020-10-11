@@ -23,6 +23,10 @@
           >Join Party</v-btn
         ></v-row
       >
+      <br />
+      <v-alert v-if="error" type="error" elevation="10" color="primary"
+        >Diese Party existiert nicht.</v-alert
+      >
     </div>
   </v-container>
 </template>
@@ -36,10 +40,24 @@ import { Component, Vue } from "vue-property-decorator";
 })
 export default class Home extends Vue {
   private url = `${process.env.VUE_APP_SERVER_URL}/login`;
-  partyCode = "";
+  private partyCode = "";
+  private error = false;
 
   joinParty() {
-    router.push({ name: "Party", params: { code: this.partyCode } });
+    this.axios
+      .get(`${process.env.VUE_APP_SERVER_URL}/checkCode`, {
+        params: {
+          code: this.partyCode
+        }
+      })
+      .then(response => {
+        if (response.data !== null) {
+          this.error = false;
+          router.push({ name: "Party", params: { code: this.partyCode } });
+        } else {
+          this.error = true;
+        }
+      });
   }
 }
 </script>
