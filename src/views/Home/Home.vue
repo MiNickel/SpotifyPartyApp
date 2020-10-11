@@ -20,7 +20,7 @@
         ></v-text-field
       ></v-row>
       <v-row justify="center"
-        ><v-btn @click="joinParty()" color="primary" rounded elevation="2"
+        ><v-btn @click="joinParty" color="primary" rounded elevation="2"
           >Join Party</v-btn
         ></v-row
       >
@@ -39,13 +39,13 @@ export default class Home extends Vue {
   private url = `${process.env.VUE_APP_SERVER_URL}/login`;
   partyCode = "";
 
-  private joinParty = () => {
+  joinParty() {
     router.push({ name: "Party", params: { code: this.partyCode } });
-  };
+  }
 
-  private change = (val: string) => {
+  change(val: string) {
     this.partyCode = val;
-  };
+  }
 }
 </script>
 <style lang="scss" src="./Home.scss"></style>

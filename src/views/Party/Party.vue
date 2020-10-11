@@ -68,7 +68,7 @@ export default class Party extends Vue {
   private awaitingSearch = false;
   private playlistTracks: unknown[] = [];
 
-  private addTrack = (track: any) => {
+  addTrack(track: any) {
     this.axios
       .get(`${process.env.VUE_APP_SERVER_URL}/addTrack`, {
         params: {
@@ -84,13 +84,12 @@ export default class Party extends Vue {
           this.playlistTracks = data;
         });
       });
-  };
+  }
 
-  private clearSearch = () => {
-    console.log("clear");
+  clearSearch() {
     this.search = "";
     this.searchTracks = [];
-  };
+  }
 
   mounted() {
     if (this.$route.params.code) {
@@ -103,7 +102,7 @@ export default class Party extends Vue {
     });
   }
 
-  private getPlaylistTracks = async () => {
+  private async getPlaylistTracks() {
     const response = await this.axios.get(
       `${process.env.VUE_APP_SERVER_URL}/playlist`,
       {
@@ -113,7 +112,7 @@ export default class Party extends Vue {
       }
     );
     return response.data.tracks;
-  };
+  }
 
   @Watch("search")
   onSearch() {
