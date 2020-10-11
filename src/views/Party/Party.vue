@@ -76,13 +76,9 @@ export default class Party extends Vue {
           trackId: track.id
         }
       })
-      .then(response => {
-        console.log(response);
+      .then(() => {
         this.clearSearch();
-        const newPlaylistTracks = this.getPlaylistTracks();
-        newPlaylistTracks.then(data => {
-          this.playlistTracks = data;
-        });
+        this.getPlaylistTracks();
       });
   }
 
@@ -95,11 +91,7 @@ export default class Party extends Vue {
     if (this.$route.params.code) {
       this.$store.commit("setCode", this.$route.params.code);
     }
-    const response = this.getPlaylistTracks();
-    response.then(data => {
-      console.log(data);
-      this.playlistTracks = data;
-    });
+    this.getPlaylistTracks();
   }
 
   private async getPlaylistTracks() {
@@ -111,7 +103,7 @@ export default class Party extends Vue {
         }
       }
     );
-    return response.data.tracks;
+    this.playlistTracks = response.data.tracks;
   }
 
   @Watch("search")

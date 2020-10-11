@@ -12,8 +12,7 @@
       <v-row class="input-margin" justify="center"
         ><v-text-field
           class="code-input"
-          :value="partyCode"
-          @input="change"
+          v-model="partyCode"
           color="primary"
           label="Party Code"
           outlined
@@ -41,10 +40,6 @@ export default class Home extends Vue {
 
   joinParty() {
     router.push({ name: "Party", params: { code: this.partyCode } });
-  }
-
-  change(val: string) {
-    this.partyCode = val;
   }
 }
 </script>
