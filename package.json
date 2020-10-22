@@ -5,7 +5,8 @@
   "scripts": {
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "start": "vue-cli-service serve"
+    "start": "vue-cli-service serve",
+    "deploy": "surge --domain https://spotify-party-app.surge.sh"
   },
   "dependencies": {
     "axios": "^0.20.0",

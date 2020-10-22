@@ -21,7 +21,10 @@
         </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title
-            class="item__title--white"
+            :class="{
+              'item__title--green': track.track.id === currentTrackId,
+              'item__title--white': track.track.id !== currentTrackId
+            }"
             v-text="track.track.name"
           >
           </v-list-item-title>
@@ -67,6 +70,7 @@ export default class Party extends Vue {
   private searchTracks: unknown[] = [];
   private awaitingSearch = false;
   private playlistTracks: unknown[] = [];
+  private currentTrackId = 0;
 
   addTrack(track: any) {
     this.axios
@@ -92,6 +96,21 @@ export default class Party extends Vue {
       this.$store.commit("setCode", this.$route.params.code);
     }
     this.getPlaylistTracks();
+    this.getCurrentlyPlayingTrack();
+  }
+
+  private async getCurrentlyPlayingTrack() {
+    const response = await this.axios.get(
+      `${process.env.VUE_APP_SERVER_URL}/currentlyPlayingTrack`,
+      {
+        params: {
+          code: this.$store.state.code
+        }
+      }
+    );
+    if (response.status === 200) {
+      this.currentTrackId = response.data;
+    }
   }
 
   private async getPlaylistTracks() {
