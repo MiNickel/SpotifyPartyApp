@@ -34,13 +34,11 @@
             v-text="item.track.artists[0].name"
           ></v-list-item-subtitle>
         </v-list-item-content>
-        <v-list-item-action
-          v-if="!$store.state.trackIds.includes(item.track.id)"
-        >
+        <v-list-item-icon v-if="!$store.state.trackIds.includes(item.track.id)">
           <v-btn @click="likeTrack(item.track.id)" icon>
             <v-icon color="secondary">mdi-heart</v-icon>
           </v-btn>
-        </v-list-item-action>
+        </v-list-item-icon>
         <v-list-item-icon v-if="$store.state.trackIds.includes(item.track.id)">
           <v-icon color="primary">mdi-heart</v-icon>
         </v-list-item-icon>
