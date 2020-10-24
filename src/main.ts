@@ -13,11 +13,15 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
   state: {
-    code: ""
+    code: "",
+    trackIds: [] as string[]
   },
   mutations: {
     setCode(state, code: string) {
       state.code = code;
+    },
+    addTrack(state, id: string) {
+      state.trackIds.push(id);
     }
   }
 });
