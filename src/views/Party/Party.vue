@@ -38,14 +38,15 @@
             v-text="item.track.artists[0].name"
           ></v-list-item-subtitle>
         </v-list-item-content>
-        <v-list-item-icon
-          @click="likeTrack(item.track.id)"
+        <v-list-item-action
           v-if="!$store.state.trackIds.includes(item.track.id)"
         >
-          <v-icon color="secondary">mdi-heart</v-icon>
-        </v-list-item-icon>
+          <v-btn @click="likeTrack(item.track.id)" icon
+            ><v-icon color="secondary">mdi-heart</v-icon></v-btn
+          >
+        </v-list-item-action>
         <v-list-item-icon v-if="$store.state.trackIds.includes(item.track.id)">
-          <v-icon color="primary">mdi-heart</v-icon>
+          <v-btn icon><v-icon color="primary">mdi-heart</v-icon></v-btn>
         </v-list-item-icon>
       </v-list-item>
     </v-list>
@@ -70,6 +71,10 @@
         </v-list-item-action>
       </v-list-item>
     </v-list>
+    <v-snackbar centered timeout="-1" v-model="snackbar">
+      Der Code lautet: {{ $route.params.code }}
+      <v-btn text color="primary" @click="snackbar = false">Schließen</v-btn>
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -86,11 +91,15 @@ export default class Party extends Vue {
   private playlistTracks: unknown[] = [];
   private currentTrackId = 0;
   private loaded = false;
+  private snackbar = false;
 
   mounted() {
     this.loaded = false;
     if (this.$route.params.code) {
       this.$store.commit("setCode", this.$route.params.code);
+    }
+    if (this.$route.params.new) {
+      this.snackbar = true;
     }
     this.getPlaylistTracks();
     this.getCurrentlyPlayingTrack();
@@ -113,6 +122,7 @@ export default class Party extends Vue {
   }
 
   private async likeTrack(id: string) {
+    console.log(id);
     if (
       this.$store.state.trackIds.findIndex(
         (likedTrackId: string) => likedTrackId === id

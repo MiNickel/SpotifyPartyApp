@@ -24,7 +24,7 @@ const routes: Array<RouteConfig> = [
     meta: { transitionName: "slide" }
   },
   {
-    path: "/party/:code?",
+    path: "/party/:code?/:new?",
     name: "Party",
     component: Party,
     meta: { transitionName: "slide" }
