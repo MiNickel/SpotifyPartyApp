@@ -98,8 +98,9 @@ export default class Party extends Vue {
     if (this.$route.params.code) {
       this.$store.commit("setCode", this.$route.params.code);
     }
-    if (this.$route.params.new) {
+    if (this.$route.params.adminId) {
       this.snackbar = true;
+      this.$store.commit("setAdminId", this.$route.params.adminId);
     }
     this.getPlaylistTracks();
     this.getCurrentlyPlayingTrack();

@@ -14,7 +14,8 @@
           class="code-input"
           v-model="partyCode"
           color="primary"
-          label="Party Code"
+          label="Enter Party Code"
+          filled
           outlined
         ></v-text-field
       ></v-row>
