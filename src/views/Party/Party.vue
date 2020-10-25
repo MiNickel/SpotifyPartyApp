@@ -99,11 +99,25 @@ export default class Party extends Vue {
       this.$store.commit("setCode", this.$route.params.code);
     }
     if (this.$route.params.adminId) {
-      this.snackbar = true;
-      this.$store.commit("setAdminId", this.$route.params.adminId);
+      this.checkAdminId();
     }
     this.getPlaylistTracks();
     this.getCurrentlyPlayingTrack();
+  }
+
+  async checkAdminId() {
+    const response = await this.axios.get(
+      `${process.env.VUE_APP_SERVER_URL}/checkAdminId`,
+      {
+        params: {
+          adminId: this.$route.params.adminId
+        }
+      }
+    );
+    if (response.status === 200) {
+      this.snackbar = true;
+      this.$store.commit("setAdminId", this.$route.params.adminId);
+    }
   }
 
   addTrack(id: string) {
