@@ -6,12 +6,24 @@ import vuetify from "./plugins/vuetify";
 import VueAxios from "vue-axios";
 import axios from "axios";
 import Vuex from "vuex";
+import createPersistedState from "vuex-persistedstate";
+import Cookies from "js-cookie";
 
 Vue.config.productionTip = false;
 Vue.use(VueAxios, axios);
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
+  plugins: [
+    createPersistedState({
+      storage: {
+        getItem: key => Cookies.get(key),
+        setItem: (key, value) =>
+          Cookies.set(key, value, { expires: 1, secure: true }),
+        removeItem: key => Cookies.remove(key)
+      }
+    })
+  ],
   state: {
     code: "",
     trackIds: [] as string[]
@@ -22,6 +34,9 @@ const store = new Vuex.Store({
     },
     addTrack(state, id: string) {
       state.trackIds.push(id);
+    },
+    resetTrackIds(state) {
+      state.trackIds = [];
     }
   }
 });

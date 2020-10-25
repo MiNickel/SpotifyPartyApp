@@ -10,11 +10,15 @@
       @click:clear="clearSearch()"
     ></v-text-field>
     <!--Liste für Tracks der Playlist-->
+    <div
+      v-if="playlistTracks.length === 0 && searchTracks.length === 0 && !loaded"
+      class="text-center"
+    >
+      <v-progress-circular indeterminate color="primary"></v-progress-circular>
+    </div>
     <v-list
       class="list"
-      v-if="
-        searchTracks.length === 0 && playlistTracks && playlistTracks.length > 0
-      "
+      v-if="searchTracks.length === 0 && playlistTracks.length > 0"
     >
       <v-list-item v-for="item in playlistTracks" :key="item.track.id">
         <v-list-item-avatar>
@@ -34,10 +38,11 @@
             v-text="item.track.artists[0].name"
           ></v-list-item-subtitle>
         </v-list-item-content>
-        <v-list-item-icon v-if="!$store.state.trackIds.includes(item.track.id)">
-          <v-btn @click="likeTrack(item.track.id)" icon>
-            <v-icon color="secondary">mdi-heart</v-icon>
-          </v-btn>
+        <v-list-item-icon
+          @click="likeTrack(item.track.id)"
+          v-if="!$store.state.trackIds.includes(item.track.id)"
+        >
+          <v-icon color="secondary">mdi-heart</v-icon>
         </v-list-item-icon>
         <v-list-item-icon v-if="$store.state.trackIds.includes(item.track.id)">
           <v-icon color="primary">mdi-heart</v-icon>
@@ -80,8 +85,19 @@ export default class Party extends Vue {
   private awaitingSearch = false;
   private playlistTracks: unknown[] = [];
   private currentTrackId = 0;
+  private loaded = false;
+
+  mounted() {
+    this.loaded = false;
+    if (this.$route.params.code) {
+      this.$store.commit("setCode", this.$route.params.code);
+    }
+    this.getPlaylistTracks();
+    this.getCurrentlyPlayingTrack();
+  }
 
   addTrack(id: string) {
+    this.loaded = false;
     this.axios
       .get(`${process.env.VUE_APP_SERVER_URL}/addTrack`, {
         params: {
@@ -120,14 +136,6 @@ export default class Party extends Vue {
     this.searchTracks = [];
   }
 
-  mounted() {
-    if (this.$route.params.code) {
-      this.$store.commit("setCode", this.$route.params.code);
-    }
-    this.getPlaylistTracks();
-    this.getCurrentlyPlayingTrack();
-  }
-
   private async getCurrentlyPlayingTrack() {
     const response = await this.axios.get(
       `${process.env.VUE_APP_SERVER_URL}/currentlyPlayingTrack`,
@@ -151,8 +159,8 @@ export default class Party extends Vue {
         }
       }
     );
-    console.log(response.data.tracks);
     this.playlistTracks = response.data.tracks;
+    this.loaded = true;
   }
 
   @Watch("search")

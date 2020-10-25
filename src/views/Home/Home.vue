@@ -24,8 +24,13 @@
         ></v-row
       >
       <br />
-      <v-alert v-if="error" type="error" elevation="10" color="primary"
-        >Diese Party existiert nicht.</v-alert
+      <v-alert
+        transition="fade-transition"
+        :value="error.show"
+        type="error"
+        elevation="10"
+        color="primary"
+        >{{ error.message }}</v-alert
       >
     </div>
   </v-container>
@@ -41,9 +46,13 @@ import { Component, Vue } from "vue-property-decorator";
 export default class Home extends Vue {
   private url = `${process.env.VUE_APP_SERVER_URL}/login`;
   private partyCode = "";
-  private error = false;
+  private error = { show: false, message: "" };
 
   joinParty() {
+    if (this.$store.state.code === this.partyCode) {
+      this.setError("Sie sind bereits in dieser Party.", 3000);
+      return;
+    }
     this.axios
       .get(`${process.env.VUE_APP_SERVER_URL}/checkCode`, {
         params: {
@@ -52,12 +61,20 @@ export default class Home extends Vue {
       })
       .then(response => {
         if (response.data !== null) {
-          this.error = false;
+          this.error = { show: false, message: "" };
+          this.$store.commit("resetTrackIds");
           router.push({ name: "Party", params: { code: this.partyCode } });
         } else {
-          this.error = true;
+          this.setError("Diese Party existiert nicht.", 3000);
         }
       });
+  }
+
+  setError(message: string, duration: number) {
+    this.error = { show: true, message };
+    setTimeout(() => {
+      this.error.show = false;
+    }, duration);
   }
 }
 </script>
