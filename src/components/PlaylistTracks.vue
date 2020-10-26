@@ -25,11 +25,17 @@
       </v-list-item-content>
       <v-list-item-action v-if="!$store.state.trackIds.includes(item.track.id)">
         <v-btn @click="likeTrack(item.track.id)" icon
-          ><v-icon color="secondary">mdi-heart</v-icon></v-btn
-        >
+          ><span
+            color="secondary"
+            class="iconify icon-secondary"
+            data-icon="mdi-heart"
+          ></span
+        ></v-btn>
       </v-list-item-action>
       <v-list-item-icon v-if="$store.state.trackIds.includes(item.track.id)">
-        <v-btn icon><v-icon color="primary">mdi-heart</v-icon></v-btn>
+        <v-btn icon
+          ><span class="iconify icon-primary" data-icon="mdi-heart"></span
+        ></v-btn>
       </v-list-item-icon>
     </v-list-item>
   </v-list>
@@ -79,3 +85,4 @@ export default class PlaylistTracks extends Vue {
   }
 }
 </script>
+<style src="./Tracks.scss" lang="scss"></style>

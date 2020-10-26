@@ -14,7 +14,7 @@
       </v-list-item-content>
       <v-list-item-action>
         <v-btn @click="addTrack(track.id)" icon>
-          <v-icon color="primary">mdi-plus-thick</v-icon>
+          <span class="iconify icon-primary" data-icon="mdi-plus-thick"></span>
         </v-btn>
       </v-list-item-action>
     </v-list-item>
@@ -33,3 +33,4 @@ export default class SearchTracks extends Vue {
   @Prop() addTrack!: Function;
 }
 </script>
+<style src="./Tracks.scss" lang="scss"></style>
