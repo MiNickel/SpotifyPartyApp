@@ -9,68 +9,28 @@
       clearable
       @click:clear="clearSearch()"
     ></v-text-field>
-    <!--Liste für Tracks der Playlist-->
     <div
       v-if="playlistTracks.length === 0 && searchTracks.length === 0 && !loaded"
       class="text-center"
     >
       <v-progress-circular indeterminate color="primary"></v-progress-circular>
     </div>
-    <v-list
-      class="list"
-      v-if="searchTracks.length === 0 && playlistTracks.length > 0"
-    >
-      <v-list-item v-for="item in playlistTracks" :key="item.track.id">
-        <v-list-item-avatar>
-          <v-img :src="item.track.album.images[2].url"></v-img>
-        </v-list-item-avatar>
-        <v-list-item-content>
-          <v-list-item-title
-            :class="{
-              'item__title--green': item.track.id === currentTrackId,
-              'item__title--white': item.track.id !== currentTrackId
-            }"
-            v-text="item.track.name"
-          >
-          </v-list-item-title>
-          <v-list-item-subtitle
-            class="item__subtitle--grey"
-            v-text="item.track.artists[0].name"
-          ></v-list-item-subtitle>
-        </v-list-item-content>
-        <v-list-item-action
-          v-if="!$store.state.trackIds.includes(item.track.id)"
-        >
-          <v-btn @click="likeTrack(item.track.id)" icon
-            ><v-icon color="secondary">mdi-heart</v-icon></v-btn
-          >
-        </v-list-item-action>
-        <v-list-item-icon v-if="$store.state.trackIds.includes(item.track.id)">
-          <v-btn icon><v-icon color="primary">mdi-heart</v-icon></v-btn>
-        </v-list-item-icon>
-      </v-list-item>
-    </v-list>
+    <!--Liste für Tracks der Playlist-->
+    <PlaylistTracks
+      :playlistTracks="playlistTracks"
+      :searchTracks="searchTracks"
+      :currentTrackId="currentTrackId"
+      :adminId="$store.state.adminId"
+      @setCurrentTrackId="setCurrentTrackId"
+    ></PlaylistTracks>
     <!--Liste für Tracks aus der Suche-->
-    <v-list class="list" v-if="searchTracks.length > 0">
-      <v-list-item v-for="track in searchTracks" :key="track.id">
-        <v-list-item-avatar>
-          <v-img :src="track.album.images[2].url"></v-img>
-        </v-list-item-avatar>
-        <v-list-item-content>
-          <v-list-item-title class="item__title--white" v-text="track.name">
-          </v-list-item-title>
-          <v-list-item-subtitle
-            class="item__subtitle--grey"
-            v-text="track.artists[0].name"
-          ></v-list-item-subtitle>
-        </v-list-item-content>
-        <v-list-item-action>
-          <v-btn @click="addTrack(track.id)" icon>
-            <v-icon color="primary">mdi-plus-thick</v-icon>
-          </v-btn>
-        </v-list-item-action>
-      </v-list-item>
-    </v-list>
+    <SearchTracks
+      :clearSearch="clearSearch"
+      :getPlaylistTracks="getPlaylistTracks"
+      :loaded="loaded"
+      :searchTracks="searchTracks"
+      :addTrack="addTrack"
+    ></SearchTracks>
     <v-snackbar centered timeout="-1" v-model="snackbar">
       Der Code lautet: {{ $route.params.code }}
       <v-btn text color="primary" @click="snackbar = false">Schließen</v-btn>
@@ -80,16 +40,18 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
+import PlaylistTracks from "../../components/PlaylistTracks.vue";
+import SearchTracks from "../../components/SearchTracks.vue";
 
 @Component({
-  components: {}
+  components: { PlaylistTracks, SearchTracks }
 })
 export default class Party extends Vue {
   private search = "";
   private searchTracks: unknown[] = [];
   private awaitingSearch = false;
   private playlistTracks: unknown[] = [];
-  private currentTrackId = 0;
+  private currentTrackId = "";
   private loaded = false;
   private snackbar = false;
 
@@ -105,19 +67,8 @@ export default class Party extends Vue {
     this.getCurrentlyPlayingTrack();
   }
 
-  async checkAdminId() {
-    const response = await this.axios.get(
-      `${process.env.VUE_APP_SERVER_URL}/checkAdminId`,
-      {
-        params: {
-          adminId: this.$route.params.adminId
-        }
-      }
-    );
-    if (response.status === 200) {
-      this.snackbar = true;
-      this.$store.commit("setAdminId", this.$route.params.adminId);
-    }
+  setCurrentTrackId(id: string) {
+    this.currentTrackId = id;
   }
 
   addTrack(id: string) {
@@ -136,8 +87,22 @@ export default class Party extends Vue {
       });
   }
 
+  async checkAdminId() {
+    const response = await this.axios.get(
+      `${process.env.VUE_APP_SERVER_URL}/checkAdminId`,
+      {
+        params: {
+          adminId: this.$route.params.adminId
+        }
+      }
+    );
+    if (response.status === 200) {
+      this.snackbar = true;
+      this.$store.commit("setAdminId", this.$route.params.adminId);
+    }
+  }
+
   private async likeTrack(id: string) {
-    console.log(id);
     if (
       this.$store.state.trackIds.findIndex(
         (likedTrackId: string) => likedTrackId === id
@@ -201,7 +166,6 @@ export default class Party extends Vue {
               }
             })
             .then(response => {
-              console.log(response.data.tracks);
               this.searchTracks = response.data.tracks;
             });
         } else {
