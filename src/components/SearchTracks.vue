@@ -14,7 +14,10 @@
       </v-list-item-content>
       <v-list-item-action>
         <v-btn @click="addTrack(track.id)" icon>
-          <span class="iconify icon-primary" data-icon="mdi-plus-thick"></span>
+          <span
+            class="iconify icon-secondary"
+            data-icon="mdi-plus-thick"
+          ></span>
         </v-btn>
       </v-list-item-action>
     </v-list-item>

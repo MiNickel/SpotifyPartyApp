@@ -61,6 +61,7 @@ export default class Party extends Vue {
       this.$store.commit("setCode", this.$route.params.code);
     }
     if (this.$route.params.adminId) {
+      this.$store.commit("resetTrackIds");
       this.checkAdminId();
     }
     this.getPlaylistTracks();
@@ -99,25 +100,6 @@ export default class Party extends Vue {
     if (response.status === 200) {
       this.snackbar = true;
       this.$store.commit("setAdminId", this.$route.params.adminId);
-    }
-  }
-
-  private async likeTrack(id: string) {
-    if (
-      this.$store.state.trackIds.findIndex(
-        (likedTrackId: string) => likedTrackId === id
-      ) === -1
-    ) {
-      this.axios
-        .get(`${process.env.VUE_APP_SERVER_URL}/likeTrack`, {
-          params: {
-            code: this.$store.state.code,
-            trackId: id
-          }
-        })
-        .then(() => {
-          this.$store.commit("addTrack", id);
-        });
     }
   }
 

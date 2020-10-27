@@ -25,17 +25,11 @@
       </v-list-item-content>
       <v-list-item-action v-if="!$store.state.trackIds.includes(item.track.id)">
         <v-btn @click="likeTrack(item.track.id)" icon
-          ><span
-            color="secondary"
-            class="iconify icon-secondary"
-            data-icon="mdi-heart"
-          ></span
-        ></v-btn>
+          ><v-icon color="secondary">mdi-heart-outline</v-icon></v-btn
+        >
       </v-list-item-action>
       <v-list-item-icon v-if="$store.state.trackIds.includes(item.track.id)">
-        <v-btn icon
-          ><span class="iconify icon-primary" data-icon="mdi-heart"></span
-        ></v-btn>
+        <v-btn icon><v-icon color="secondary">mdi-heart</v-icon> </v-btn>
       </v-list-item-icon>
     </v-list-item>
   </v-list>
@@ -50,6 +44,23 @@ export default class PlaylistTracks extends Vue {
   @Prop() searchTracks!: unknown[];
   @Prop() currentTrackId!: number;
   @Prop() adminId!: string | undefined;
+
+  private async playTrack(id: string) {
+    const response = await this.axios.get(
+      `${process.env.VUE_APP_SERVER_URL}/playTrack`,
+      {
+        params: {
+          code: this.$store.state.code,
+          trackId: id,
+          adminId: this.$store.state.adminId
+        }
+      }
+    );
+    if (response.status !== 200) {
+      return;
+    }
+    this.$emit("setCurrentTrackId", id);
+  }
 
   private async likeTrack(id: string) {
     if (
@@ -68,23 +79,6 @@ export default class PlaylistTracks extends Vue {
           this.$store.commit("addTrack", id);
         });
     }
-  }
-
-  private async playTrack(id: string) {
-    const response = await this.axios.get(
-      `${process.env.VUE_APP_SERVER_URL}/playTrack`,
-      {
-        params: {
-          code: this.$store.state.code,
-          trackId: id,
-          adminId: this.$store.state.adminId
-        }
-      }
-    );
-    if (response.status !== 200) {
-      return;
-    }
-    this.$emit("setCurrentTrackId", id);
   }
 }
 </script>
