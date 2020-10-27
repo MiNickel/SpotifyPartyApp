@@ -19,6 +19,7 @@ if (process.env.NODE_ENV === "production") {
     updatefound() {
       caches.keys().then(cacheNames => {
         cacheNames.forEach(cacheName => {
+          console.log(cacheName);
           caches.delete(cacheName);
         });
       });

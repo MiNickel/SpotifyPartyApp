@@ -70,18 +70,21 @@ export default class PlaylistTracks extends Vue {
     }
   }
 
-  private playTrack(id: string) {
-    this.axios
-      .get(`${process.env.VUE_APP_SERVER_URL}/playTrack`, {
+  private async playTrack(id: string) {
+    const response = await this.axios.get(
+      `${process.env.VUE_APP_SERVER_URL}/playTrack`,
+      {
         params: {
           code: this.$store.state.code,
           trackId: id,
           adminId: this.$store.state.adminId
         }
-      })
-      .then(() => {
-        this.$emit("setCurrentTrackId", id);
-      });
+      }
+    );
+    if (response.status !== 200) {
+      return;
+    }
+    this.$emit("setCurrentTrackId", id);
   }
 }
 </script>
