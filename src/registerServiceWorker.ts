@@ -1,6 +1,8 @@
 /* eslint-disable no-console */
 
 import { register } from "register-service-worker";
+import Swal from "sweetalert2";
+import "./App.scss";
 
 if (process.env.NODE_ENV === "production") {
   register(`${process.env.BASE_URL}service-worker.js`, {
@@ -25,8 +27,24 @@ if (process.env.NODE_ENV === "production") {
       });
       console.log("New content is downloading.");
     },
-    updated() {
-      console.log("New content is available; please refresh.");
+    updated(registration) {
+      if (
+        Swal.fire({
+          title: "Update",
+          text: "Neues Update verügbar, jetzt herunterladen?",
+          showCancelButton: true,
+          confirmButtonText: "Ja",
+          cancelButtonText: "Nein",
+          cancelButtonColor: "#FFFFFF",
+          confirmButtonColor: "#1DB954"
+        }).then(result => {
+          if (result.value) {
+            const worker = registration.waiting;
+            worker?.postMessage({ type: "SKIP_WAITING" });
+          }
+        })
+      )
+        console.log("New content is available; please refresh.");
     },
     offline() {
       console.log(
@@ -36,5 +54,12 @@ if (process.env.NODE_ENV === "production") {
     error(error) {
       console.error("Error during service worker registration:", error);
     }
+  });
+
+  let refreshing: boolean;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (refreshing) return;
+    window.location.reload();
+    refreshing = true;
   });
 }
