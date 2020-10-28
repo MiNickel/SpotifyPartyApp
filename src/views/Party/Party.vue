@@ -1,6 +1,7 @@
 <template>
   <v-container fluid>
     <v-text-field
+      autocomplete="off"
       placeholder="Suche"
       class="search-input"
       v-model="search"

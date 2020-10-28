@@ -11,6 +11,7 @@
       <br />
       <v-row class="input-margin" justify="center"
         ><v-text-field
+          autocomplete="off"
           class="code-input"
           v-model="partyCode"
           color="primary"

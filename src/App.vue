@@ -1,8 +1,5 @@
 <template>
   <v-app>
-    <v-app-bar app flat>
-      <v-toolbar-title>Spotify Party App</v-toolbar-title>
-    </v-app-bar>
     <v-main v-touch="{ left: () => leftSwipe(), right: () => rightSwipe() }">
       <transition :name="transitionName" mode="out-in">
         <router-view></router-view>
