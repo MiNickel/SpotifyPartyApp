@@ -61,7 +61,7 @@ export default class Party extends Vue {
   private loaded = false;
   private snackbar = false;
   private timeout = -1;
-  private message = `Der Code lautet: ${this.$store.state.code}`;
+  private message = `Der Code lautet: ${this.$route.params.code}`;
 
   mounted() {
     this.loaded = false;

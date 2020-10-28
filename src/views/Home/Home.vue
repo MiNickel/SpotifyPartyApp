@@ -1,8 +1,16 @@
 <template>
   <v-container fill-height fluid>
-    <div style="width: 100%" justify="center" align="center">
+    <div v-if="!loaded" style="width: 100%" justify="center" align="center">
       <v-row justify="center"
-        ><v-btn color="primary" rounded :href="url" elevation="2">
+        ><v-progress-circular
+          indeterminate
+          color="primary"
+        ></v-progress-circular
+      ></v-row>
+    </div>
+    <div v-if="loaded" style="width: 100%" justify="center" align="center">
+      <v-row justify="center"
+        ><v-btn color="primary" rounded @click="createParty" elevation="2">
           Create New Party
         </v-btn>
       </v-row>
@@ -49,6 +57,12 @@ export default class Home extends Vue {
   private url = `${process.env.VUE_APP_SERVER_URL}/login`;
   private partyCode = "";
   private error = { show: false, message: "" };
+  private loaded = true;
+
+  createParty() {
+    this.loaded = false;
+    window.location.href = `${process.env.VUE_APP_SERVER_URL}/login`;
+  }
 
   joinParty() {
     if (this.$store.state.code === this.partyCode) {
