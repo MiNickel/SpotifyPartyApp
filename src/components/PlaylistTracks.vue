@@ -46,20 +46,24 @@ export default class PlaylistTracks extends Vue {
   @Prop() adminId!: string | undefined;
 
   private async playTrack(id: string) {
-    const response = await this.axios.get(
-      `${process.env.VUE_APP_SERVER_URL}/playTrack`,
-      {
+    this.axios
+      .get(`${process.env.VUE_APP_SERVER_URL}/playTrack`, {
         params: {
           code: this.$store.state.code,
           trackId: id,
           adminId: this.$store.state.adminId
         }
-      }
-    );
-    if (response.status !== 200) {
-      return;
-    }
-    this.$emit("setCurrentTrackId", id);
+      })
+      .then(() => {
+        this.$emit("setCurrentTrackId", id);
+      })
+      .catch(() => {
+        this.$emit(
+          "showSnackbar",
+          "Stellen Sie sicher, dass im Hintergrund ein Song über Spotify läuft.",
+          6000
+        );
+      });
   }
 
   private async likeTrack(id: string) {

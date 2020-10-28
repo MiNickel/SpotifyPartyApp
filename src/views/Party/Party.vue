@@ -23,6 +23,7 @@
       :currentTrackId="currentTrackId"
       :adminId="$store.state.adminId"
       @setCurrentTrackId="setCurrentTrackId"
+      @showSnackbar="showSnackbar"
     ></PlaylistTracks>
     <!--Liste für Tracks aus der Suche-->
     <SearchTracks
@@ -32,9 +33,13 @@
       :searchTracks="searchTracks"
       :addTrack="addTrack"
     ></SearchTracks>
-    <v-snackbar centered timeout="-1" v-model="snackbar">
-      Der Code lautet: {{ $route.params.code }}
-      <v-btn text color="primary" @click="snackbar = false">Schließen</v-btn>
+    <v-snackbar centered :timeout="timeout" v-model="snackbar">
+      {{ message }}
+      <template v-slot:action="{ attrs }">
+        <v-btn color="primary" text v-bind="attrs" @click="snackbar = false">
+          Schließen
+        </v-btn>
+      </template>
     </v-snackbar>
   </v-container>
 </template>
@@ -55,6 +60,8 @@ export default class Party extends Vue {
   private currentTrackId = "";
   private loaded = false;
   private snackbar = false;
+  private timeout = -1;
+  private message = `Der Code lautet: ${this.$store.state.code}`;
 
   mounted() {
     this.loaded = false;
@@ -71,6 +78,12 @@ export default class Party extends Vue {
 
   setCurrentTrackId(id: string) {
     this.currentTrackId = id;
+  }
+
+  showSnackbar(message: string, timeInMs: number) {
+    this.message = message;
+    this.timeout = timeInMs;
+    this.snackbar = true;
   }
 
   addTrack(id: string) {
