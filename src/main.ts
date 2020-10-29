@@ -17,16 +17,16 @@ const store = new Vuex.Store({
   plugins: [
     createPersistedState({
       storage: {
-        getItem: key => Cookies.get(key),
+        getItem: (key) => Cookies.get(key),
         setItem: (key, value) => Cookies.set(key, value, { expires: 1 }),
-        removeItem: key => Cookies.remove(key)
-      }
-    })
+        removeItem: (key) => Cookies.remove(key),
+      },
+    }),
   ],
   state: {
     code: "",
     trackIds: [] as string[],
-    adminId: ""
+    adminId: "",
   },
   mutations: {
     setCode(state, code: string) {
@@ -40,13 +40,13 @@ const store = new Vuex.Store({
     },
     setAdminId(state, id: string) {
       state.adminId = id;
-    }
-  }
+    },
+  },
 });
 
 new Vue({
   router,
   vuetify,
   store,
-  render: h => h(App)
+  render: (h) => h(App),
 }).$mount("#app");

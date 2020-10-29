@@ -30,8 +30,8 @@ if (process.env.NODE_ENV === "production") {
           confirmButtonText: "Ja",
           cancelButtonText: "Nein",
           cancelButtonColor: "#FFFFFF",
-          confirmButtonColor: "#1DB954"
-        }).then(result => {
+          confirmButtonColor: "#1DB954",
+        }).then((result) => {
           if (result.value) {
             const worker = registration.waiting;
             worker?.postMessage({ type: "SKIP_WAITING" });
@@ -47,7 +47,7 @@ if (process.env.NODE_ENV === "production") {
     },
     error(error) {
       console.error("Error during service worker registration:", error);
-    }
+    },
   });
 
   let refreshing: boolean;

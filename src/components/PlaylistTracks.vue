@@ -13,7 +13,7 @@
         <v-list-item-title
           :class="{
             'item__title--green': item.track.id === currentTrackId,
-            'item__title--white': item.track.id !== currentTrackId
+            'item__title--white': item.track.id !== currentTrackId,
           }"
           v-text="item.track.name"
         >
@@ -51,8 +51,8 @@ export default class PlaylistTracks extends Vue {
         params: {
           code: this.$store.state.code,
           trackId: id,
-          adminId: this.$store.state.adminId
-        }
+          adminId: this.$store.state.adminId,
+        },
       })
       .then(() => {
         this.$emit("setCurrentTrackId", id);
@@ -61,7 +61,7 @@ export default class PlaylistTracks extends Vue {
         this.$emit(
           "showSnackbar",
           "Stellen Sie sicher, dass im Hintergrund ein Song über Spotify läuft.",
-          6000
+          6000,
         );
       });
   }
@@ -69,15 +69,15 @@ export default class PlaylistTracks extends Vue {
   private async likeTrack(id: string) {
     if (
       this.$store.state.trackIds.findIndex(
-        (likedTrackId: string) => likedTrackId === id
+        (likedTrackId: string) => likedTrackId === id,
       ) === -1
     ) {
       this.axios
         .get(`${process.env.VUE_APP_SERVER_URL}/likeTrack`, {
           params: {
             code: this.$store.state.code,
-            trackId: id
-          }
+            trackId: id,
+          },
         })
         .then(() => {
           this.$store.commit("addTrack", id);

@@ -10,7 +10,7 @@ const routes: Array<RouteConfig> = [
     path: "/",
     name: "Home",
     component: Home,
-    meta: { transitionName: "slide" }
+    meta: { transitionName: "slide" },
   },
   {
     path: "/about",
@@ -21,18 +21,18 @@ const routes: Array<RouteConfig> = [
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/About/About.vue"),
 
-    meta: { transitionName: "slide" }
+    meta: { transitionName: "slide" },
   },
   {
     path: "/party/:code?/:adminId?",
     name: "Party",
     component: Party,
-    meta: { transitionName: "slide" }
-  }
+    meta: { transitionName: "slide" },
+  },
 ];
 
 const router = new VueRouter({
-  routes
+  routes,
 });
 
 export default router;

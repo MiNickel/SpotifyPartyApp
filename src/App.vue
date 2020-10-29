@@ -7,19 +7,13 @@
     </v-main>
     <v-bottom-navigation dark>
       <v-btn to="/">
-        <span>
-          Home
-        </span>
+        <span> Home </span>
       </v-btn>
       <v-btn v-if="$store.state.code !== ''" to="/party">
-        <span>
-          Party
-        </span>
+        <span> Party </span>
       </v-btn>
       <v-btn to="/about">
-        <span>
-          About
-        </span>
+        <span> About </span>
       </v-btn>
     </v-bottom-navigation>
   </v-app>

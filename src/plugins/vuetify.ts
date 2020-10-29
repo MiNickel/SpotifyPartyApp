@@ -3,8 +3,8 @@ import Vuetify from "vuetify/lib";
 
 Vue.use(Vuetify, {
   options: {
-    customProperties: true
-  }
+    customProperties: true,
+  },
 });
 
 export default new Vuetify({
@@ -13,8 +13,8 @@ export default new Vuetify({
       light: {
         primary: "#1DB954",
         secondary: "#FFFFFF",
-        accent: "#181818"
-      }
-    }
-  }
+        accent: "#181818",
+      },
+    },
+  },
 });

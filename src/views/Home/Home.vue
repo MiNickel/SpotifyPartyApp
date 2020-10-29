@@ -51,7 +51,7 @@ import router from "@/router";
 import { Component, Vue } from "vue-property-decorator";
 
 @Component({
-  components: {}
+  components: {},
 })
 export default class Home extends Vue {
   private url = `${process.env.VUE_APP_SERVER_URL}/login`;
@@ -72,10 +72,10 @@ export default class Home extends Vue {
     this.axios
       .get(`${process.env.VUE_APP_SERVER_URL}/checkCode`, {
         params: {
-          code: this.partyCode
-        }
+          code: this.partyCode,
+        },
       })
-      .then(response => {
+      .then((response) => {
         if (response.data !== null) {
           this.error = { show: false, message: "" };
           this.$store.commit("resetTrackIds");
