@@ -25,7 +25,7 @@ if (process.env.NODE_ENV === "production") {
       if (
         Swal.fire({
           title: "Update",
-          text: "Neues Update verügbar, jetzt herunterladen?",
+          text: "Neues Update verfügbar, jetzt herunterladen?",
           showCancelButton: true,
           confirmButtonText: "Ja",
           cancelButtonText: "Nein",
