@@ -55,5 +55,10 @@ if (process.env.NODE_ENV === "production") {
     if (refreshing) return;
     window.location.reload();
     refreshing = true;
+    Swal.fire({
+      icon: "success",
+      title: "Update durchgeführt",
+      text: "Die neue Version wurde erfolgreich heruntergeladen.",
+    });
   });
 }
