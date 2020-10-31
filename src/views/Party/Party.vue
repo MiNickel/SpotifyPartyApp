@@ -50,7 +50,7 @@ import PlaylistTracks from "../../components/PlaylistTracks.vue";
 import SearchTracks from "../../components/SearchTracks.vue";
 
 @Component({
-  components: { PlaylistTracks, SearchTracks }
+  components: { PlaylistTracks, SearchTracks },
 })
 export default class Party extends Vue {
   private search = "";
@@ -92,8 +92,8 @@ export default class Party extends Vue {
       .get(`${process.env.VUE_APP_SERVER_URL}/addTrack`, {
         params: {
           code: this.$store.state.code,
-          trackId: id
-        }
+          trackId: id,
+        },
       })
       .then(() => {
         this.$store.commit("addTrack", id);
@@ -107,9 +107,9 @@ export default class Party extends Vue {
       `${process.env.VUE_APP_SERVER_URL}/checkAdminId`,
       {
         params: {
-          adminId: this.$route.params.adminId
-        }
-      }
+          adminId: this.$route.params.adminId,
+        },
+      },
     );
     if (response.status === 200) {
       this.snackbar = true;
@@ -127,9 +127,9 @@ export default class Party extends Vue {
       `${process.env.VUE_APP_SERVER_URL}/currentlyPlayingTrack`,
       {
         params: {
-          code: this.$store.state.code
-        }
-      }
+          code: this.$store.state.code,
+        },
+      },
     );
     if (response.status === 200) {
       this.currentTrackId = response.data;
@@ -141,9 +141,9 @@ export default class Party extends Vue {
       `${process.env.VUE_APP_SERVER_URL}/playlist`,
       {
         params: {
-          code: this.$store.state.code
-        }
-      }
+          code: this.$store.state.code,
+        },
+      },
     );
     this.playlistTracks = response.data.tracks;
     this.loaded = true;
@@ -158,10 +158,10 @@ export default class Party extends Vue {
             .get(`${process.env.VUE_APP_SERVER_URL}/search`, {
               params: {
                 code: this.$store.state.code,
-                search: this.search
-              }
+                search: this.search,
+              },
             })
-            .then(response => {
+            .then((response) => {
               this.searchTracks = response.data.tracks;
             });
         } else {
