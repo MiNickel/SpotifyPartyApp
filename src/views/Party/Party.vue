@@ -73,7 +73,6 @@ export default class Party extends Vue {
       this.checkAdminId();
     }
     this.getPlaylistTracks();
-    this.getCurrentlyPlayingTrack();
   }
 
   setCurrentTrackId(id: string) {
@@ -122,20 +121,6 @@ export default class Party extends Vue {
     this.searchTracks = [];
   }
 
-  private async getCurrentlyPlayingTrack() {
-    const response = await this.axios.get(
-      `${process.env.VUE_APP_SERVER_URL}/currentlyPlayingTrack`,
-      {
-        params: {
-          code: this.$store.state.code,
-        },
-      },
-    );
-    if (response.status === 200) {
-      this.currentTrackId = response.data;
-    }
-  }
-
   private async getPlaylistTracks() {
     const response = await this.axios.get(
       `${process.env.VUE_APP_SERVER_URL}/playlist`,
@@ -145,7 +130,9 @@ export default class Party extends Vue {
         },
       },
     );
+    console.log(response.data.tracks);
     this.playlistTracks = response.data.tracks;
+    this.currentTrackId = response.data.currentlyPlayingTrack;
     this.loaded = true;
   }
 

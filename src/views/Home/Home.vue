@@ -65,6 +65,7 @@ export default class Home extends Vue {
   }
 
   joinParty() {
+    this.loaded = false;
     if (this.$store.state.code === this.partyCode) {
       this.setError("Sie sind bereits in dieser Party.", 3000);
       return;
