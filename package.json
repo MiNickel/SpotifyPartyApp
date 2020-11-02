@@ -9,7 +9,7 @@
     "start": "vue-cli-service serve"
   },
   "dependencies": {
-    "@sweetalert2/theme-dark": "^4.0.0",
+    "@sweetalert2/theme-dark": "^4.0.1",
     "@types/js-cookie": "^2.2.6",
     "axios": "^0.21.0",
     "core-js": "^3.6.5",
