@@ -9,7 +9,11 @@
       label="Suche"
       clearable
       @click:clear="clearSearch()"
-    ></v-text-field>
+    >
+      <template v-slot:append-outer
+        ><v-icon color="primary" @click="listen">mdi-microphone</v-icon>
+      </template>
+    </v-text-field>
     <div
       v-if="playlistTracks.length === 0 && searchTracks.length === 0 && !loaded"
       class="text-center"
@@ -49,6 +53,10 @@ import { Component, Vue, Watch } from "vue-property-decorator";
 import PlaylistTracks from "../../components/PlaylistTracks.vue";
 import SearchTracks from "../../components/SearchTracks.vue";
 
+interface Window {
+  webkitSpeechRecognition: unknown;
+}
+
 @Component({
   components: { PlaylistTracks, SearchTracks },
 })
@@ -62,8 +70,35 @@ export default class Party extends Vue {
   private snackbar = false;
   private timeout = -1;
   private message = `Der Code lautet: ${this.$route.params.code}`;
+  // eslint-disable-next-line no-undef
+  private recognition = new SpeechRecognition();
+
+  listen() {
+    this.recognition.start();
+  }
+
+  webSpeechApi() {
+    // eslint-disable-next-line no-undef
+    if (!SpeechRecognition) {
+      return;
+    }
+    // eslint-disable-next-line no-undef
+    this.recognition.continuous = false;
+    this.recognition.lang = "en-US";
+    this.recognition.interimResults = false;
+    this.recognition.maxAlternatives = 1;
+    this.recognition.addEventListener("result", (event) => {
+      const text = event.results[0][0].transcript;
+      this.search = text;
+    });
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    this.recognition.addEventListener("onspeechend", (event) => {
+      this.recognition.stop();
+    });
+  }
 
   mounted() {
+    this.webSpeechApi();
     this.loaded = false;
     if (this.$route.params.code) {
       this.$store.commit("setCode", this.$route.params.code);
@@ -130,7 +165,6 @@ export default class Party extends Vue {
         },
       },
     );
-    console.log(response.data.tracks);
     this.playlistTracks = response.data.tracks;
     this.currentTrackId = response.data.currentlyPlayingTrack;
     this.loaded = true;
