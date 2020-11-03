@@ -10,8 +10,10 @@
       clearable
       @click:clear="clearSearch()"
     >
-      <template v-slot:append-outer
-        ><v-icon color="primary" @click="listen">mdi-microphone</v-icon>
+      <template v-slot:append-outer>
+        <v-btn icon @click="listen" color="primary"
+          ><v-icon>mdi-microphone</v-icon></v-btn
+        >
       </template>
     </v-text-field>
     <div
