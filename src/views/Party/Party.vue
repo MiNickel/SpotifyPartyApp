@@ -108,6 +108,7 @@ export default class Party extends Vue {
     if (this.$route.params.adminId) {
       this.$store.commit("resetTrackIds");
       this.checkAdminId();
+      this.$router.replace({ path: "/party" });
     }
     this.getPlaylistTracks();
   }
@@ -125,11 +126,9 @@ export default class Party extends Vue {
   addTrack(id: string) {
     this.loaded = false;
     this.axios
-      .get(`${process.env.VUE_APP_SERVER_URL}/addTrack`, {
-        params: {
-          code: this.$store.state.code,
-          trackId: id,
-        },
+      .post(`${process.env.VUE_APP_SERVER_URL}/addTrack`, {
+        code: this.$store.state.code,
+        trackId: id,
       })
       .then(() => {
         this.$store.commit("addTrack", id);

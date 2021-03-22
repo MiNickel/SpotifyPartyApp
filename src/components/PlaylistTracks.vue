@@ -47,12 +47,10 @@ export default class PlaylistTracks extends Vue {
 
   private async playTrack(id: string) {
     this.axios
-      .get(`${process.env.VUE_APP_SERVER_URL}/playTrack`, {
-        params: {
-          code: this.$store.state.code,
-          trackId: id,
-          adminId: this.$store.state.adminId,
-        },
+      .put(`${process.env.VUE_APP_SERVER_URL}/playTrack`, {
+        code: this.$store.state.code,
+        trackId: id,
+        adminId: this.$store.state.adminId,
       })
       .then(() => {
         this.$emit("setCurrentTrackId", id);
@@ -73,11 +71,9 @@ export default class PlaylistTracks extends Vue {
       ) === -1
     ) {
       this.axios
-        .get(`${process.env.VUE_APP_SERVER_URL}/likeTrack`, {
-          params: {
-            code: this.$store.state.code,
-            trackId: id,
-          },
+        .put(`${process.env.VUE_APP_SERVER_URL}/likeTrack`, {
+          code: this.$store.state.code,
+          trackId: id,
         })
         .then(() => {
           this.$store.commit("addTrack", id);
