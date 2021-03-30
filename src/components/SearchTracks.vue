@@ -22,11 +22,12 @@
 </template>
 
 <script lang="ts">
+import { SpotifyApi } from "node_modules/@types/spotify-api";
 import { Component, Prop, Vue } from "vue-property-decorator";
 
 @Component
 export default class SearchTracks extends Vue {
-  @Prop() searchTracks!: unknown[];
+  @Prop() searchTracks!: SpotifyApi.TrackObjectFull[];
   @Prop() clearSearch!: Function;
   @Prop() getPlaylistTracks!: Function;
   @Prop() loaded!: boolean;

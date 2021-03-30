@@ -5,28 +5,31 @@
         <router-view></router-view>
       </transition>
     </v-main>
-    <v-bottom-navigation dark>
-      <v-btn to="/">
-        <span> Home </span>
-      </v-btn>
-      <v-btn v-if="$store.state.code !== ''" to="/party">
-        <span> Party </span>
-      </v-btn>
-      <v-btn to="/about">
-        <span> About </span>
-      </v-btn>
-    </v-bottom-navigation>
+    <v-footer fixed padless dark
+      ><Player
+        v-if="$route.path === '/party' && $store.state.code !== ''"
+      ></Player
+    ></v-footer>
   </v-app>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import router from "@/router";
+import Player from "./components/Player.vue";
+import { Spotify } from "node_modules/@types/spotify-web-playback-sdk";
 
-@Component({})
-export default class App extends Vue {
-  private transitionName = "";
+declare global {
+  interface Window {
+    webkitSpeechRecognition: unknown;
+    onSpotifyWebPlaybackSDKReady(): void;
+    // eslint-disable-next-line no-undef
+    Spotify: typeof Spotify;
+  }
+}
 
+@Component<App>({
+  components: { Player },
   created() {
     this.$router.beforeEach((to, from, next) => {
       const leavePath = from.name;
@@ -42,9 +45,26 @@ export default class App extends Vue {
       }
       next();
     });
-  }
+  },
 
-  private leftSwipe = () => {
+  computed: {
+    codeAndAdminId() {
+      return `${this.$store.state.code}|${this.$store.state.adminId}`;
+    },
+  },
+
+  watch: {
+    codeAndAdminId(newVal: string, oldVal: string) {
+      const [oldCode, oldAdminId] = oldVal.split("|");
+      const [newCode, newAdminId] = newVal.split("|");
+      console.log(oldCode, newCode, oldAdminId, newAdminId);
+    },
+  },
+})
+export default class App extends Vue {
+  transitionName = "";
+
+  leftSwipe = () => {
     switch (this.$route.name) {
       case "Home": {
         if (this.$store.state.code !== "") {
@@ -60,7 +80,7 @@ export default class App extends Vue {
       }
     }
   };
-  private rightSwipe = () => {
+  rightSwipe = () => {
     switch (this.$route.name) {
       case "Party": {
         router.push({ name: "Home" });

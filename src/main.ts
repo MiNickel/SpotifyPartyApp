@@ -27,6 +27,8 @@ const store = new Vuex.Store({
     code: "",
     trackIds: [] as string[],
     adminId: "",
+    accessToken: "",
+    deviceId: "",
   },
   mutations: {
     setCode(state, code: string) {
@@ -40,6 +42,12 @@ const store = new Vuex.Store({
     },
     setAdminId(state, id: string) {
       state.adminId = id;
+    },
+    setAccessToken(state, accessToken: string) {
+      state.accessToken = accessToken;
+    },
+    setDeviceId(state, deviceId: string) {
+      state.deviceId = deviceId;
     },
   },
 });

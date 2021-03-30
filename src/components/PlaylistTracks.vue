@@ -29,55 +29,54 @@
         >
       </v-list-item-action>
       <v-list-item-icon v-if="$store.state.trackIds.includes(item.track.id)">
-        <v-btn icon><v-icon color="secondary">mdi-heart</v-icon> </v-btn>
+        <v-btn icon><v-icon color="primary">mdi-heart</v-icon> </v-btn>
       </v-list-item-icon>
     </v-list-item>
   </v-list>
 </template>
 
 <script lang="ts">
+import { IPlaylistService, PlaylistService } from "@/services/playlist.service";
+import { SpotifyApi } from "node_modules/@types/spotify-api";
 import { Component, Prop, Vue } from "vue-property-decorator";
+import { IPlayerService, PlayerService } from "../services/player.service";
 
 @Component
 export default class PlaylistTracks extends Vue {
-  @Prop() playlistTracks!: unknown[];
-  @Prop() searchTracks!: unknown[];
-  @Prop() currentTrackId!: number;
+  @Prop() playlistTracks!: SpotifyApi.PlaylistTrackObject[];
+  @Prop() searchTracks!: SpotifyApi.TrackObjectFull[];
+  @Prop() currentTrackId: string | undefined;
   @Prop() adminId!: string | undefined;
 
-  private async playTrack(id: string) {
-    this.axios
-      .put(`${process.env.VUE_APP_SERVER_URL}/playTrack`, {
-        code: this.$store.state.code,
-        trackId: id,
-        adminId: this.$store.state.adminId,
-      })
-      .then(() => {
-        this.$emit("setCurrentTrackId", id);
-      })
-      .catch(() => {
-        this.$emit(
-          "showSnackbar",
-          "Stellen Sie sicher, dass im Hintergrund ein Song über Spotify läuft.",
-          6000,
-        );
-      });
+  private playerService: IPlayerService = new PlayerService();
+  private playlistService: IPlaylistService = new PlaylistService();
+
+  async playTrack(id: string) {
+    try {
+      await this.playerService.playTrack(
+        this.$store.state.code,
+        id,
+        this.$store.state.adminId,
+        this.$store.state.deviceId,
+      );
+      this.$emit("setCurrentTrackId", id);
+    } catch (error) {
+      this.$emit(
+        "showSnackbar",
+        "Stellen Sie sicher, dass im Hintergrund ein Song über Spotify läuft.",
+        6000,
+      );
+    }
   }
 
-  private async likeTrack(id: string) {
+  async likeTrack(id: string) {
     if (
       this.$store.state.trackIds.findIndex(
         (likedTrackId: string) => likedTrackId === id,
       ) === -1
     ) {
-      this.axios
-        .put(`${process.env.VUE_APP_SERVER_URL}/likeTrack`, {
-          code: this.$store.state.code,
-          trackId: id,
-        })
-        .then(() => {
-          this.$store.commit("addTrack", id);
-        });
+      await this.playlistService.likeTrack(this.$store.state.code, id);
+      this.$store.commit("addTrack", id);
     }
   }
 }

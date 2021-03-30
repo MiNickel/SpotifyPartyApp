@@ -48,43 +48,39 @@
 
 <script lang="ts">
 import router from "@/router";
+import { AuthService, IAuthService } from "@/services/auth.service";
 import { Component, Vue } from "vue-property-decorator";
 
-@Component({
+@Component<Home>({
   components: {},
 })
 export default class Home extends Vue {
-  private url = `${process.env.VUE_APP_SERVER_URL}/login`;
+  url = `${process.env.VUE_APP_SERVER_URL}/login`;
   private partyCode = "";
   private error = { show: false, message: "" };
-  private loaded = true;
+  loaded = true;
+  private authService: IAuthService = new AuthService();
 
   createParty() {
     this.loaded = false;
     window.location.href = `${process.env.VUE_APP_SERVER_URL}/login`;
   }
 
-  joinParty() {
+  async joinParty() {
     this.loaded = false;
     if (this.$store.state.code === this.partyCode) {
       this.setError("Sie sind bereits in dieser Party.", 3000);
       return;
     }
-    this.axios
-      .get(`${process.env.VUE_APP_SERVER_URL}/checkCode`, {
-        params: {
-          code: this.partyCode,
-        },
-      })
-      .then((response) => {
-        if (response.data !== null) {
-          this.error = { show: false, message: "" };
-          this.$store.commit("resetTrackIds");
-          router.push({ name: "Party", params: { code: this.partyCode } });
-        } else {
-          this.setError("Diese Party existiert nicht.", 3000);
-        }
-      });
+
+    const response = await this.authService.checkCode(this.partyCode);
+    if (response.status === 204) {
+      this.error = { show: false, message: "" };
+      this.$store.commit("resetTrackIds");
+      router.push({ name: "Party", params: { code: this.partyCode } });
+    } else {
+      this.setError("Diese Party existiert nicht.", 3000);
+    }
   }
 
   setError(message: string, duration: number) {
