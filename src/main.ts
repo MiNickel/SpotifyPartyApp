@@ -27,6 +27,7 @@ const store = new Vuex.Store({
     code: "",
     trackIds: [] as string[],
     adminId: "",
+    nickname: "",
   },
   mutations: {
     setCode(state, code: string) {
@@ -40,6 +41,9 @@ const store = new Vuex.Store({
     },
     setAdminId(state, id: string) {
       state.adminId = id;
+    },
+    setNickname(state, name: string) {
+      state.nickname = name;
     },
   },
 });

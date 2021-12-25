@@ -27,7 +27,7 @@ import router from "@/router";
 export default class App extends Vue {
   private transitionName = "";
 
-  created() {
+  created(): void {
     this.$router.beforeEach((to, from, next) => {
       const leavePath = from.name;
       const enterPath = to.name;
@@ -45,6 +45,7 @@ export default class App extends Vue {
   }
 
   private leftSwipe = () => {
+    localStorage.setItem("test", "hallo");
     switch (this.$route.name) {
       case "Home": {
         if (this.$store.state.code !== "") {
@@ -61,6 +62,7 @@ export default class App extends Vue {
     }
   };
   private rightSwipe = () => {
+    localStorage.setItem("test", "hallod");
     switch (this.$route.name) {
       case "Party": {
         router.push({ name: "Home" });
@@ -78,4 +80,4 @@ export default class App extends Vue {
   };
 }
 </script>
-<style src="./App.scss" lang="scss"></style>
+<style src="./App.css" lang="css"></style>

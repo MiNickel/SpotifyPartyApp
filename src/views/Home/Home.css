@@ -1,20 +1,24 @@
 .v-label {
+  color: #2e2e2e !important;
+}
+
+.v-card__title {
   color: white !important;
 }
 
 .code-input .v-text-field__slot input {
-  color: white !important;
+  color: #2e2e2e !important;
 }
 
 .input-margin {
-  margin-left: 10px !important;
-  margin-right: 10px !important;
+  margin: 10px !important;
 }
 
 .or-color {
   color: white;
+  margin: 20px;
 }
 
 .code-input .v-input__slot {
-  background-color: #2e2e2e !important;
+  background-color: white !important;
 }

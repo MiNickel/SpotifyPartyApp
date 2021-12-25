@@ -2,7 +2,7 @@
 
 import { register } from "register-service-worker";
 import Swal from "sweetalert2";
-import "./App.scss";
+import "./App.css";
 
 if (process.env.NODE_ENV === "production") {
   register(`${process.env.BASE_URL}service-worker.js`, {

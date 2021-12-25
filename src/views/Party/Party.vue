@@ -10,11 +10,6 @@
       clearable
       @click:clear="clearSearch()"
     >
-      <template v-slot:append-outer>
-        <v-btn icon @click="listen" color="primary"
-          ><v-icon>mdi-microphone</v-icon></v-btn
-        >
-      </template>
     </v-text-field>
     <div
       v-if="playlistTracks.length === 0 && searchTracks.length === 0 && !loaded"
@@ -54,60 +49,36 @@
 import { Component, Vue, Watch } from "vue-property-decorator";
 import PlaylistTracks from "../../components/PlaylistTracks.vue";
 import SearchTracks from "../../components/SearchTracks.vue";
-
-interface Window {
-  webkitSpeechRecognition: unknown;
-}
+import { SpotifyApi } from "node_modules/@types/spotify-api";
+import { PlaylistService } from "../../services/playlist.service";
+import { SearchService } from "../../services/search.service";
+import { AuthService } from "../../services/auth.service";
 
 @Component({
   components: { PlaylistTracks, SearchTracks },
 })
 export default class Party extends Vue {
   private search = "";
-  private searchTracks: unknown[] = [];
+  private searchTracks: SpotifyApi.TrackObjectFull[] = [];
   private awaitingSearch = false;
-  private playlistTracks: unknown[] = [];
+  private playlistTracks: SpotifyApi.PlaylistTrackObject[] = [];
   private currentTrackId = "";
   private loaded = false;
   private snackbar = false;
   private timeout = -1;
   private message = `Der Code lautet: ${this.$route.params.code}`;
-  // eslint-disable-next-line no-undef
-  private recognition = new SpeechRecognition();
 
-  listen() {
-    this.recognition.start();
-  }
+  private playlistService = new PlaylistService();
+  private searchService = new SearchService();
+  private authService = new AuthService();
 
-  webSpeechApi() {
-    // eslint-disable-next-line no-undef
-    if (!SpeechRecognition) {
-      return;
-    }
-    // eslint-disable-next-line no-undef
-    this.recognition.continuous = false;
-    this.recognition.lang = "en-US";
-    this.recognition.interimResults = false;
-    this.recognition.maxAlternatives = 1;
-    this.recognition.addEventListener("result", (event) => {
-      const text = event.results[0][0].transcript;
-      this.search = text;
-    });
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    this.recognition.addEventListener("onspeechend", (event) => {
-      this.recognition.stop();
-    });
-  }
-
-  mounted() {
-    this.webSpeechApi();
+  async mounted() {
     this.loaded = false;
     if (this.$route.params.code) {
       this.$store.commit("setCode", this.$route.params.code);
     }
     if (this.$route.params.adminId) {
-      this.$store.commit("resetTrackIds");
-      this.checkAdminId();
+      await this.checkAdminId();
       this.$router.replace({ path: "/party" });
     }
     this.getPlaylistTracks();
@@ -123,32 +94,26 @@ export default class Party extends Vue {
     this.snackbar = true;
   }
 
-  addTrack(id: string) {
+  async addTrack(id: string) {
     this.loaded = false;
-    this.axios
-      .post(`${process.env.VUE_APP_SERVER_URL}/addTrack`, {
-        code: this.$store.state.code,
-        trackId: id,
-      })
-      .then(() => {
-        this.$store.commit("addTrack", id);
-        this.clearSearch();
-        this.getPlaylistTracks();
-      });
+    await this.playlistService.addTrack(
+      this.$store.state.code,
+      id,
+      this.$store.state.nickname,
+    );
+    this.$store.commit("addTrack", id);
+    this.clearSearch();
+    this.getPlaylistTracks();
   }
 
   async checkAdminId() {
-    const response = await this.axios.get(
-      `${process.env.VUE_APP_SERVER_URL}/checkAdminId`,
-      {
-        params: {
-          adminId: this.$route.params.adminId,
-        },
-      },
+    const response = await this.authService.checkAdminId(
+      this.$route.params.adminId,
     );
     if (response.status === 200) {
       this.snackbar = true;
       this.$store.commit("setAdminId", this.$route.params.adminId);
+      this.$store.commit("setNickname", "admin");
     }
   }
 
@@ -158,13 +123,8 @@ export default class Party extends Vue {
   }
 
   private async getPlaylistTracks() {
-    const response = await this.axios.get(
-      `${process.env.VUE_APP_SERVER_URL}/playlist`,
-      {
-        params: {
-          code: this.$store.state.code,
-        },
-      },
+    const response = await this.playlistService.getPlaylistTracks(
+      this.$store.state.code,
     );
     this.playlistTracks = response.data.tracks;
     this.currentTrackId = response.data.currentlyPlayingTrack;
@@ -174,18 +134,13 @@ export default class Party extends Vue {
   @Watch("search")
   onSearch() {
     if (!this.awaitingSearch) {
-      setTimeout(() => {
+      setTimeout(async () => {
         if (this.search && this.search.length > 0) {
-          this.axios
-            .get(`${process.env.VUE_APP_SERVER_URL}/search`, {
-              params: {
-                code: this.$store.state.code,
-                search: this.search,
-              },
-            })
-            .then((response) => {
-              this.searchTracks = response.data.tracks;
-            });
+          const response = await this.searchService.search(
+            this.$store.state.code,
+            this.search,
+          );
+          this.searchTracks = response.data.tracks;
         } else {
           this.searchTracks = [];
         }
@@ -197,4 +152,4 @@ export default class Party extends Vue {
 }
 </script>
 
-<style lang="scss" src="./Party.scss"></style>
+<style lang="css" src="./Party.css"></style>

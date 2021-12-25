@@ -23,14 +23,15 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
+import { SpotifyApi } from "node_modules/@types/spotify-api";
 
 @Component
 export default class SearchTracks extends Vue {
-  @Prop() searchTracks!: unknown[];
-  @Prop() clearSearch!: Function;
-  @Prop() getPlaylistTracks!: Function;
+  @Prop() searchTracks!: SpotifyApi.TrackObjectFull[];
+  @Prop() clearSearch!: () => void;
+  @Prop() getPlaylistTracks!: () => void;
   @Prop() loaded!: boolean;
-  @Prop() addTrack!: Function;
+  @Prop() addTrack!: (id: string) => void;
 }
 </script>
-<style src="./Tracks.scss" lang="scss"></style>
+<style src="./Tracks.css" lang="css"></style>
